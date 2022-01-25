@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Contact } from './contact.model';
 
 @Component({
   selector: 'cms-contacts',
@@ -6,9 +7,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./contacts.component.css']
 })
 export class ContactsComponent implements OnInit {
+
+  selectedContact: Contact;
   contacts = [];
 
-  constructor() { }
+  constructor() { 
+    console.log(this.selectedContact);
+  }
 
   ngOnInit(): void {
   }
