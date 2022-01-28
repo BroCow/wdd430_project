@@ -41,6 +41,7 @@ export class MessageEditComponent implements OnInit {
   }
 
   onClear(){
+    console.log('onClear called');
   this.subject.nativeElement.value = '';
   this.msgText.nativeElement.value = '';
   }

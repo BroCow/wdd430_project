@@ -1,4 +1,4 @@
-<div>document-list works!</div>
+<!-- <div>document-list works!</div>
 
 <div class="panel panel-default">
     
@@ -15,4 +15,31 @@
         </div>
     </div>
     
-</div>
+</div> -->
+
+ 
+<div class="panel panel-default">
+
+    <div class="panel-heading">
+
+      <div class="row pad-left-right">
+        <span class="pull-left title">Documents</span>
+        <a class="btn btn-success pull-right">Add Document</a>
+      </div>
+
+    </div>
+
+    <div class="panel-body">
+
+      <div class="center-panel">
+        <cms-document-item
+        *ngFor="let documentItem of documents"
+        [document]="documentItem"
+        (click)="onSelectedDocument(documentItem)"
+        ></cms-document-item>
+      </div>
+
+    </div>
+  
+  </div>
+  

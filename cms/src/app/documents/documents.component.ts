@@ -7,9 +7,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DocumentsComponent implements OnInit {
 
+  selectedDocument: Document;
+
   constructor() { }
 
   ngOnInit(): void {
   }
 
-}
+} 
