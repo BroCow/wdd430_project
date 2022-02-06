@@ -19,6 +19,7 @@
 
         <div class="row">
           <label>Description:</label>
+          <br>
           <span class="label-value">{{ document.description }}</span>
         </div>
 
@@ -26,7 +27,8 @@
 
         <div class="row">
           <label>URL:</label>
-          <span class="label-value">{{ document.url }}</span>
+          <br>
+          <span class="label-value"><a href="{{ document.url }}">{{ document.url }}</a></span>
         </div>
 
       </div>
