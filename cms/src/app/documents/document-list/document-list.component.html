@@ -24,7 +24,8 @@
 
       <div class="row pad-left-right">
         <span class="pull-left title">Documents</span>
-        <a class="btn btn-success pull-right">Add Document</a>
+        <!-- locate the <a> (anchor) tag for the Add Document button. Add a [routerLink] directive to the anchor tag and assign the URL path defined in the mapping table (for example, "new") to load the DocumentEditComponent for a new document -->
+        <a [routerLink]="['new']" class="btn btn-success pull-right">Add Document</a>
       </div>
 
     </div>
@@ -32,10 +33,16 @@
     <div class="panel-body">
 
       <div class="center-panel">
-        <cms-document-item
+        <!-- delete the code to detect the (click) event -->
+        <!-- <cms-document-item
         *ngFor="let documentItem of documents"
         [document]="documentItem"
         (click)="onSelectedDocument(documentItem)"
+        ></cms-document-item> -->
+        <cms-document-item
+        *ngFor="let documentItem of documents; let i = index"
+        [document]="documentItem"
+        [index]="i"
         ></cms-document-item>
       </div>
 

@@ -4,7 +4,7 @@
     <div class="col-xs-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h2>Contacts <span><a href="#" class="btn btn-success pull-right" role="button">New Contact</a></span></h2>
+                <h2>Contacts <span><a [routerLink]="['new']" class="btn btn-success pull-right" role="button">New Contact</a></span></h2>
             </div>
             <div class="panel-body">
                 <!-- <a 
@@ -24,12 +24,18 @@
                         style="max-height: 50px;">
                     </span>
                 </a> -->
-
-                <cms-contact-item 
+ 
+                <!-- <cms-contact-item 
                 *ngFor="let contactEl of contacts"
                 [contact] = "contactEl"
                 (contactSelected)="onSelected(contactEl)"
                 (click)="onSelected(contactEl)"
+                ></cms-contact-item> -->
+                <cms-contact-item 
+                *ngFor="let contactEl of contacts; let i = index"
+                [contact] = "contactEl"
+                [index] = "i"
+                (contactSelected)="onSelected(contactEl)"
                 ></cms-contact-item>
             </div>
         </div>

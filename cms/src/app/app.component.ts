@@ -7,10 +7,10 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
 
-  selectedFeature: string = 'documents';
-
-  switchView(selectedFeature: string){
-    this.selectedFeature = selectedFeature;
-  }
+  // The switchView() method in the app.component.ts file is also no longer needed. Delete the selectedFeature property and the switchView() method in the AppComponent class
+  // selectedFeature: string = 'documents';
+  // switchView(selectedFeature: string){
+  //   this.selectedFeature = selectedFeature;
+  // }
 }
  

@@ -29,8 +29,7 @@ export class ContactListComponent implements OnInit {
     //   '../../assets/images/barzeer.jpg',
     //   null
     // )
-  
-
+   
     
   //  Modify the constructor() method to inject the ContactService into the ContactListComponent class
   constructor(private contactService: ContactService) { }
@@ -38,17 +37,24 @@ export class ContactListComponent implements OnInit {
   // Modify the ngOnInit() method to call the getContacts() method in the ContactService and assign the array of contacts returned from the method call to the contacts class variable in the ContactListComponent
   ngOnInit(): void {
     this.contacts = this.contactService.getContacts();
+
+    this.contactService.contactChangedEvent
+      .subscribe(
+        (contactsArray: Contact[]) => {
+          this.contacts = contactsArray;
+        }
+      )
   }
 
-  onSelected(contact: Contact){
-    console.log('onSelected called');
-    console.log(contact);
-    // NO LONGER NEEDED - USING CONTACT SERVICE
-    // this.selectedContactEvent.emit(contact);
+  // onSelected(contact: Contact){
+  //   console.log('onSelected called');
+  //   console.log(contact);
+  //   // NO LONGER NEEDED - USING CONTACT SERVICE
+  //   // this.selectedContactEvent.emit(contact);
 
-    // Modify the onSelected(contact:Contact) method in the ContactListComponent class to emit the contactSelectedEvent with the Contact object passed into the method
-    this.contactService.contactSelectedEvent.emit(contact);
-  }
+  //   // Modify the onSelected(contact:Contact) method in the ContactListComponent class to emit the contactSelectedEvent with the Contact object passed into the method
+  //   this.contactService.contactSelectedEvent.emit(contact);
+  // }
 
 }
  

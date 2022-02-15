@@ -10,6 +10,8 @@ export class ContactItemComponent implements OnInit {
 
   @Input() contact: Contact;
 
+  @Input() index: number;
+
   constructor() { }
 
   ngOnInit(): void {

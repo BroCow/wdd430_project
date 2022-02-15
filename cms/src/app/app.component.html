@@ -1,14 +1,29 @@
 
+<!-- Delete the selectedFeatureEvent event listener, -->
+<!-- <cms-header (selectedFeatureEvent)="switchView($event)"></cms-header> -->
+<cms-header ></cms-header>
 
-<cms-header (selectedFeatureEvent)="switchView($event)"></cms-header>
+<div class="container">
+    
+    <div class="row">
 
-<div class="container pull-left">
-    <cms-documents *ngIf="selectedFeature === 'documents'"></cms-documents>
-    <cms-message-list *ngIf="selectedFeature === 'messages'"></cms-message-list>
-    <cms-contacts *ngIf="selectedFeature === 'contacts'"></cms-contacts>
+        <div class="col-md-12">
+
+            <router-outlet></router-outlet>
+            
+        </div>
+
+    </div>
+
 </div>
+    <!-- The *ngIf statements are no longer needed because Angular routing will automatically select and load the correct component based on the current URL instead - delete the <cms-documents>, <cms-message-list>, and <cms-contacts> tags-->
+    <!-- <cms-documents ></cms-documents>
+    <cms-message-list ></cms-message-list>
+    <cms-contacts ></cms-contacts> -->
+
+
 
 <!-- <cms-contacts></cms-contacts> -->
-<hr>
+<!-- <hr> -->
 <!-- <p>This is the main APP componenent</p> -->
- 
+  

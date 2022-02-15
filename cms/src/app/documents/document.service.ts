@@ -3,10 +3,12 @@ import { Document } from './document.model';
 // import the MOCKDOCUMENTS.ts file
 import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
 
-@Injectable({
+@Injectable({ 
   providedIn: 'root'
 })
 export class DocumentService {
+  // create a new EventEmitter in the DocumentService class of the Document[] data type and assign it to a property named documentChangedEvent.
+  documentChangedEvent = new EventEmitter<Document[]>();
   // add a class variable named documents whose data type is an array of document objects
   documents: Document[] = [];
 
@@ -39,6 +41,18 @@ export class DocumentService {
     // ENDIF
     // ENDFOR
     // RETURN null
+  }
+
+  deleteDocument(document: Document){
+    if(!document){
+      return;
+    }
+    const pos = this.documents.indexOf(document);
+    if(pos<0){
+      return;
+    }
+    this.documents.splice(pos, 1);
+    this.documentChangedEvent.emit(this.documents.slice());
   }
 }
  

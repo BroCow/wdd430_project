@@ -6,11 +6,13 @@
             <a href="#" class="navbar-brand">WeLearn CMS</a>
         </div>
 
+        <!-- Replace the href attribute in each of the three <a> (anchor) tags with a [routerLink] directive. Assign the appropriate URL path defined in the routing table above to the [routerLink] directives. The corresponding component mapped to the URL path in the route will be loaded and display in the browser when the anchor tag is selected -->
+
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="#" (click)="onSelected('documents')">Documents</a></li>
-                <li><a href="#" (click)="onSelected('messages')">Messages</a></li>
-                <li><a href="#" (click)="onSelected('contacts')">Contacts</a></li>
+                <li routerLinkActive="active"><a routerLink="/documents">Documents</a></li>
+                <li routerLinkActive="active"><a routerLink="/messages">Messages</a></li>
+                <li routerLinkActive="active"><a routerLink="/contacts">Contacts</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -28,4 +30,4 @@
 
     </div>
 
-</nav> 
+</nav>  

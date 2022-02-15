@@ -1,4 +1,5 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Document } from '../document.model';
 import { DocumentService } from '../document.service';
 
@@ -53,17 +54,27 @@ export class DocumentListComponent implements OnInit {
   
 
   // inject the new DocumentService into the DocumentListComponent class
-  constructor(private documentService: DocumentService) { }
+  constructor(private documentService: DocumentService,
+              private router: Router,
+              private route: ActivatedRoute) { }
 
   // Modify the ngOnInit() method located in the DocumentListComponent class to call the getDocuments() method defined in the DocumentService. Assign the array returned from the method to the documents class variable
   ngOnInit(): void {
     this.documents = this.documentService.getDocuments();
+
+    this.documentService.documentChangedEvent
+      .subscribe(
+        (documentsArray: Document[]) => {
+          this.documents = documentsArray;
+        }
+      )
   }
 
+  // delete the onSelectedDocument() method:
   // Modify the onSelectedDocument(document: Document) method to now emit the documentSelectedEvent and pass it the Document object selected and passed into the method.
-  onSelectedDocument(document: Document){
-    // this.selectedDocumentEvent.emit(document);
-    this.documentService.documentSelectedEvent.emit(document);
-  }
+  // onSelectedDocument(document: Document){
+  //   // this.selectedDocumentEvent.emit(document);
+  //   this.documentService.documentSelectedEvent.emit(document);
+  // }
 
 }

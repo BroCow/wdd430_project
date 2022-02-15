@@ -19,8 +19,8 @@
                 </div>
 
                 <div class="pull-right">
-                    <button type="button" class="btn btn-primary" style="margin-right: 20px;">Edit</button>
-                    <button type="button" class="btn btn-danger">Delete</button>
+                    <a [routerLink]="['/contacts/:id/edit']" class="btn btn-primary" style="margin-right: 20px;">Edit</a>
+                    <a type="button" class="btn btn-danger" (click)="onDelete()">Delete</a>
                 </div>
                 
             </div>
