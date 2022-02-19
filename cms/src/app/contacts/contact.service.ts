@@ -1,11 +1,19 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Contact } from './contact.model';
 import { MOCKCONTACTS } from './MOCKCONTACTS';
+//  Add new import for SUBJECT
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContactService {
+  // Create a new class variable called maxDocumentId of the number data type at the top of the class.
+  maxContactId: number;
+
+  // Define a new class variable called documentListChangedEvent to the top of the DocumentServiceClass. Create and assign a new Subject object whose datatype is an array of Document objects to the variable
+  contactListChangedEvent = new Subject<Contact[]>();
+
   contactChangedEvent = new EventEmitter<Contact[]>();
   // Create a class variable named contacts whose data type is an array of contact objects. Initialize the variable with an empty array ([])
   contacts: Contact[] = [];
@@ -17,6 +25,7 @@ export class ContactService {
   constructor() {
     // Inside the constructor method, assign the value of the MOCKCONTACTS variable defined in the MOCKCONTACTS.ts file to the contacts class variable in the ContactService class.
     this.contacts = MOCKCONTACTS;
+    this.maxContactId = this.getMaxId();
    }
 
   //  The ContactService class needs a method to return the list of contacts
@@ -37,16 +46,54 @@ export class ContactService {
     return null;
   }
 
+  getMaxId(): number{
+    let maxId = 0;
+    this.contacts.forEach(element => {
+      let currentId = parseInt(element.id);
+      if(currentId > maxId){
+        maxId = currentId
+      }
+    });
+    return maxId;
+  }
+
   deleteContact(contact: Contact){
-    if(!contact){
+    if(contact == undefined || contact == null){
       return;
     }
-    const pos = this.contacts.indexOf(contact);
+    let pos = this.contacts.indexOf(contact);
     if(pos<0){
       return;
     }
     this.contacts.splice(pos, 1);
+    let contactsListClone = this.contacts.slice();
+    this.contactListChangedEvent.next(contactsListClone);
     this.contactChangedEvent.emit(this.contacts.slice());
+  }
+
+  addContact(newContact: Contact){
+    if(newContact == undefined || newContact == null){
+      return;
+    }
+    this.maxContactId++;
+    newContact.id = this.maxContactId.toString();
+    this.contacts.push(newContact);
+    let contactsListClone = this.contacts.slice();
+    this.contactListChangedEvent.next(contactsListClone);
+  }
+
+  updateContact(originalContact: Contact, newContact: Contact){
+    if(originalContact == undefined || originalContact == null || newContact == undefined || newContact == null){
+      return;
+    }
+    let pos = this.contacts.indexOf(originalContact);
+    if(pos < 0){
+      return;
+    }
+    newContact.id = originalContact.id;
+    this.contacts[pos] = newContact;
+    let contactsListClone = this.contacts.slice();
+    this.contactListChangedEvent.next(contactsListClone);
   }
 }
  

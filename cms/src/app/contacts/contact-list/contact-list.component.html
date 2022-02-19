@@ -23,7 +23,7 @@
                         class="image-responsive" 
                         style="max-height: 50px;">
                     </span>
-                </a> -->
+                </a> --> 
  
                 <!-- <cms-contact-item 
                 *ngFor="let contactEl of contacts"
@@ -32,9 +32,9 @@
                 (click)="onSelected(contactEl)"
                 ></cms-contact-item> -->
                 <cms-contact-item 
-                *ngFor="let contactEl of contacts; let i = index"
+                *ngFor="let contactEl of contacts;"
                 [contact] = "contactEl"
-                [index] = "i"
+                
                 (contactSelected)="onSelected(contactEl)"
                 ></cms-contact-item>
             </div>

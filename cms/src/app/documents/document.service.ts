@@ -3,12 +3,22 @@ import { Document } from './document.model';
 // import the MOCKDOCUMENTS.ts file
 import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
 
+// add a statement at the top of the file to import the rxjs class
+import { Subject } from 'rxjs';
+ 
 @Injectable({ 
   providedIn: 'root'
 })
 export class DocumentService {
+  // Create a new class variable called maxDocumentId of the number data type at the top of the class.
+  maxDocumentId: number;
+
+  // Define a new class variable called documentListChangedEvent to the top of the DocumentServiceClass. Create and assign a new Subject object whose datatype is an array of Document objects to the variable
+  documentListChangedEvent = new Subject<Document[]>();
+
   // create a new EventEmitter in the DocumentService class of the Document[] data type and assign it to a property named documentChangedEvent.
   documentChangedEvent = new EventEmitter<Document[]>();
+
   // add a class variable named documents whose data type is an array of document objects
   documents: Document[] = [];
 
@@ -18,6 +28,8 @@ export class DocumentService {
   // Use the constructor function in the DocumentService class and assign the value of the MOCKDOCUMENTS variable defined in the MOCKDOCUMENTS.ts file to the documents class variable in the DocumentService class
   constructor() {
     this.documents = MOCKDOCUMENTS;
+    // Inside the constructor() method of the DocumentService class call the getMaxId() function and assign the value returned to the maxDocumentId class variable
+    this.maxDocumentId = this.getMaxId();
    }
 
      //  The DocumentService class needs a method to return the list of documents
@@ -44,15 +56,54 @@ export class DocumentService {
   }
 
   deleteDocument(document: Document){
-    if(!document){
+    if(document == undefined || document == null){
       return;
     }
-    const pos = this.documents.indexOf(document);
+    let pos = this.documents.indexOf(document);
     if(pos<0){
       return;
     }
     this.documents.splice(pos, 1);
-    this.documentChangedEvent.emit(this.documents.slice());
+    // this.documentChangedEvent.emit(this.documents.slice());
+    let documentsListClone = this.documents.slice();
+    this.documentListChangedEvent.next(documentsListClone);
+    this.documentChangedEvent.next(this.documents.slice());
+  }
+
+  getMaxId(): number{
+    let maxId = 0;
+    this.documents.forEach(element => {
+      let currentId = parseInt(element.id);
+      if(currentId > maxId){
+        maxId = currentId
+      }
+    });
+    return maxId;
+  }
+
+  addDocument(newDocument: Document){
+    if(newDocument == undefined || newDocument == null){
+      return;
+    }
+    this.maxDocumentId++;
+    newDocument.id = this.maxDocumentId.toString();
+    this.documents.push(newDocument);
+    let documentsListClone = this.documents.slice();
+    this.documentListChangedEvent.next(documentsListClone);
+  }
+
+  updateDocument(originalDocument: Document, newDocument: Document){
+    if(originalDocument == undefined || originalDocument == null || newDocument == undefined || newDocument == null){
+      return;
+    }
+    let pos = this.documents.indexOf(originalDocument);
+    if(pos < 0){
+      return;
+    }
+    newDocument.id = originalDocument.id;
+    this.documents[pos] = newDocument;
+    let documentsListClone = this.documents.slice();
+    this.documentListChangedEvent.next(documentsListClone);
   }
 }
  

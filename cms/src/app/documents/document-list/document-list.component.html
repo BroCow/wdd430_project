@@ -40,10 +40,9 @@
         (click)="onSelectedDocument(documentItem)"
         ></cms-document-item> -->
         <cms-document-item
-        *ngFor="let documentItem of documents; let i = index"
+        *ngFor="let documentItem of documents"
         [document]="documentItem"
-        [index]="i"
-        ></cms-document-item>
+        ></cms-document-item> 
       </div>
 
     </div>

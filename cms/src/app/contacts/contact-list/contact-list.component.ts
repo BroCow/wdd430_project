@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Contact } from '../contact.model';
 import { ContactService } from '../contact.service';
 
@@ -8,6 +9,9 @@ import { ContactService } from '../contact.service';
   styleUrls: ['./contact-list.component.css']
 })
 export class ContactListComponent implements OnInit {
+  // define a class variable called subscription of the Subscription datatype near the top of the class
+  contactSub: Subscription;
+
 // NO LONGER NEEDED - USING 'contactSelectedEvent' EMITTER IN CONTACT SERVICE
   // @Output() selectedContactEvent = new EventEmitter<Contact>();
 
@@ -38,13 +42,29 @@ export class ContactListComponent implements OnInit {
   ngOnInit(): void {
     this.contacts = this.contactService.getContacts();
 
-    this.contactService.contactChangedEvent
+    // this.contactService.contactChangedEvent
+    //   .subscribe(
+    //     (contactsArray: Contact[]) => {
+    //       this.contacts = contactsArray;
+    //     }
+    //   )
+
+      // subscribe to the documentListChangedEvent object you created in the DocumentService class
+    // Assign the Subscription object returned from the subscribe() function to the subscription class variable
+    this.contactSub = this.contactService.contactListChangedEvent
+      // Pass an arrow function to the subscribe() function. Define an input parameter called documentsList whose datatype is an array of Document objects
       .subscribe(
-        (contactsArray: Contact[]) => {
-          this.contacts = contactsArray;
+        (contactList: Contact[]) => {
+          // Inside of the function, assign the array passed to the documentsList parameter to the documents class attribute
+          this.contacts = contactList;
         }
       )
   }
+
+  // Implement the ngOnDestroy() lifecycle function. You will need import the OnDestroy class and add OnDestroy class to the list of functions implemented in the DocumentListComponent class. Unsubscribe from the subscription that was assigned to the subscription class variable in the ngOnInit() function earlier.
+  ngOnDestroy(): void {
+    this.contactSub.unsubscribe();
+}
 
   // onSelected(contact: Contact){
   //   console.log('onSelected called');
