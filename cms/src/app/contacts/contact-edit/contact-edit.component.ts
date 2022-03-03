@@ -27,23 +27,32 @@ export class ContactEditComponent implements OnInit {
     this.route.params
     .subscribe(
       (params: Params) => {
-        this.id = this.route.params['id'];
+        console.log("params id = " + this.id);
 
-        if(this.id === undefined || this.id === null){
+        this.id = params['id'];
+
+        if(!this.id){
+          console.log("this.Id parameter is undefined or null")
           this.editMode = false;
           return;
         }
 
+        console.log("Found an id");
         this.originalContact = this.contactService.getContact(this.id);
+        console.log("originalContact id = " + this.originalContact.id);
 
-        if(this.originalContact === undefined || this.originalContact === null){
+        if(!this.originalContact){
+          console.log("originalDocument is undefined or null");
           return;
         }
+
         this.editMode = true;
-        this.contact = JSON.parse(JSON.stringify(this.originalContact));
+        console.log(this.editMode);
+
+        this.contact = {...this.originalContact};
 
         if(this.groupContacts){
-          this.groupContacts = JSON.parse(JSON.stringify(this.originalContact));
+          this.groupContacts = {...this.groupContacts};
         }
       }
     )
@@ -57,6 +66,7 @@ export class ContactEditComponent implements OnInit {
   onSubmit(form: NgForm){
     console.log("submitted");
     const value = form.value;
+    
     const newContact = new Contact(value.id, value.name, value.email, value.phone, value.imageUrl, value.group);
 
     if(this.editMode){

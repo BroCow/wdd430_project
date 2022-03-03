@@ -31,7 +31,9 @@ export class DocumentEditComponent implements OnInit {
         (params: Params) => {
           console.log("params id = " + this.id);
 
-          if(this.id === undefined || this.id === null){
+          this.id = params['id'];
+
+          if(!this.id){
             console.log("this.Id parameter is undefined or null")
             this.editMode = false;
             return;
@@ -42,7 +44,7 @@ export class DocumentEditComponent implements OnInit {
           console.log("originalDocument id = " + this.originalDocument.id);
           
 
-          if(this.originalDocument === undefined || this.originalDocument === null){
+          if(!this.originalDocument){
             console.log("originalDocument is undefined or null");
             return;
           }
@@ -50,33 +52,11 @@ export class DocumentEditComponent implements OnInit {
           this.editMode = true;
           console.log(this.editMode);
 
-          this.document = JSON.parse(JSON.stringify(this.originalDocument));
+          // this.document = JSON.parse(JSON.stringify(this.originalDocument));
+          this.document = {...this.originalDocument};
           console.log("copy of document = " + this.document);
         }
       )
-
-
-
-
-    
-    // this.route.params
-    // .subscribe(
-    //   (params: Params) => {
-    //     this.document.id = params['id'];
-    //     if(this.document.id == undefined || this.document.id == null){
-    //       this.editMode = false;
-    //       return;
-    //     }
-
-    //     this.originalDocument = this.documentService.getDocument(this.document.id);
-    //     if(this.originalDocument == undefined || this.originalDocument == null){
-    //       return;
-    //     }
-    //     this.editMode = true;
-    //     this.document = JSON.parse(JSON.stringify(this.originalDocument));
-
-    //   }
-    // )
   }
  
   onCancel(){
@@ -108,18 +88,5 @@ export class DocumentEditComponent implements OnInit {
     }
 
     this.router.navigate(['/documents']);
-
-
-    // console.log("submit");
-    // const value = form.value;
-    // const newDocument = new Document(value.id, value.name, value.description, value.url, null);
-    // if(this.editMode){
-    //   this.documentService.updateDocument(this.originalDocument, newDocument);
-    // } else {
-    //   this.documentService.addDocument(newDocument);
-    // }
-    // this.router.navigate(['/documents']);
   }
-  
-
 }

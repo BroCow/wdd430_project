@@ -12,7 +12,7 @@ export class ContactDetailComponent implements OnInit {
 
   // @Input() 
   contact: Contact;
-
+ 
   id: string;
 
   contactDetails: Contact[] = [];
