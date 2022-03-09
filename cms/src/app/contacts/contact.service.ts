@@ -3,6 +3,8 @@ import { Contact } from './contact.model';
 import { MOCKCONTACTS } from './MOCKCONTACTS';
 //  Add new import for SUBJECT
 import { Subject } from 'rxjs';
+// Import the HttpClient and HttpHeaders packages at the top of the file
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -16,22 +18,70 @@ export class ContactService {
 
   contactChangedEvent = new EventEmitter<Contact[]>();
   // Create a class variable named contacts whose data type is an array of contact objects. Initialize the variable with an empty array ([])
-  contacts: Contact[] = [];
+  private contacts: Contact[] = [];
 
   // Add an EventEmitter to the ContactService. Define a new variable named contactSelectedEvent and assign a new EventEmitter object of the contact data type to the variable
   contactSelectedEvent = new EventEmitter<Contact>();
 
 
-  constructor() {
+  constructor(private http: HttpClient) {
     // Inside the constructor method, assign the value of the MOCKCONTACTS variable defined in the MOCKCONTACTS.ts file to the contacts class variable in the ContactService class.
     this.contacts = MOCKCONTACTS;
+    // this.storeContact();
     this.maxContactId = this.getMaxId();
    }
 
   //  The ContactService class needs a method to return the list of contacts
   getContacts(): Contact[]{
     // Return a copy of the information from array using 'slice'
-    return this.contacts.slice();
+    // return this.contacts.slice();
+    this.http
+      .get<Contact[]>('https://wdd430-25ca2-default-rtdb.firebaseio.com/contacts.json')
+      .subscribe(
+        (contacts: Contact[]) => {
+          this.contacts = contacts;
+          this.maxContactId = this.getMaxId();
+          this.contacts.sort(function (a,b){
+            if(a.name < b.name){
+              return -1;
+            }
+            else if(a.name > b.name){
+              return 1;
+            }
+            else{
+              return 0;
+            }
+          });
+          let contactListClone = this.contacts.slice();
+          this.contactChangedEvent.next(contactListClone);
+        },
+        (error: any) => {
+          console.log(error);
+        }
+      )
+      return this.contacts.slice();
+  }
+
+
+  storeContact(){
+    const contactsArrayString = JSON.stringify(this.contacts);
+    console.log(contactsArrayString);
+
+    const headers = new HttpHeaders()
+    .set('content-type', 'application/json');
+    console.log(headers);
+
+    const contacts = this.getContacts();
+    this.http
+      .put('https://wdd430-25ca2-default-rtdb.firebaseio.com/contacts.json',
+      contacts, {'headers': headers}
+      )
+      .subscribe(response => {
+        console.log(response);
+
+        let contactListClone = this.contacts.slice();
+        this.contactListChangedEvent.next(contactListClone);
+      });
   }
 
   // The ContactService also needs a method to find a specific Contact object in the contacts array
@@ -67,7 +117,9 @@ export class ContactService {
     }
     this.contacts.splice(pos, 1);
     let contactsListClone = this.contacts.slice();
-    this.contactListChangedEvent.next(contactsListClone);
+    // this.contactListChangedEvent.next(contactsListClone);
+    this.storeContact();
+
     this.contactChangedEvent.emit(this.contacts.slice());
   }
 
@@ -79,7 +131,8 @@ export class ContactService {
     newContact.id = this.maxContactId.toString();
     this.contacts.push(newContact);
     let contactsListClone = this.contacts.slice();
-    this.contactListChangedEvent.next(contactsListClone);
+    // this.contactListChangedEvent.next(contactsListClone);
+    this.storeContact();
   }
 
   updateContact(originalContact: Contact, newContact: Contact){
@@ -93,7 +146,8 @@ export class ContactService {
     newContact.id = originalContact.id;
     this.contacts[pos] = newContact;
     let contactsListClone = this.contacts.slice();
-    this.contactListChangedEvent.next(contactsListClone);
+    // this.contactListChangedEvent.next(contactsListClone);
+    this.storeContact();
   }
 }
  

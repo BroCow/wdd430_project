@@ -9,6 +9,10 @@ import { ContactService } from '../contact.service';
   styleUrls: ['./contact-list.component.css']
 })
 export class ContactListComponent implements OnInit {
+
+  // Define a property named term of the string data type at the top of the ContactListComponent class.
+  term: string;
+
   // define a class variable called subscription of the Subscription datatype near the top of the class
   contactSub: Subscription;
 
@@ -47,7 +51,7 @@ export class ContactListComponent implements OnInit {
     //     (contactsArray: Contact[]) => {
     //       this.contacts = contactsArray;
     //     }
-    //   )
+    //   ) 
 
       // subscribe to the documentListChangedEvent object you created in the DocumentService class
     // Assign the Subscription object returned from the subscribe() function to the subscription class variable
@@ -75,6 +79,13 @@ export class ContactListComponent implements OnInit {
   //   // Modify the onSelected(contact:Contact) method in the ContactListComponent class to emit the contactSelectedEvent with the Contact object passed into the method
   //   this.contactService.contactSelectedEvent.emit(contact);
   // }
+
+  search(value: string){
+    this.term = value;
+    
+  }
+
+
 
 }
  
