@@ -36,7 +36,7 @@ export class DocumentService {
    }
 
 
-
+ 
 
      //  The DocumentService class needs a method to return the list of documents
   // getDocuments(): Document[]{
@@ -96,10 +96,10 @@ export class DocumentService {
     console.log(headers);
 
 
-    const documents = this.getDocuments();
+    // const documents = this.getDocuments();
     this.http
         .put('https://wdd430-25ca2-default-rtdb.firebaseio.com/documents.json', 
-        documents, {'headers': headers}
+        this.documents, {'headers': headers}
         )
         .subscribe(response => {
         console.log(response);

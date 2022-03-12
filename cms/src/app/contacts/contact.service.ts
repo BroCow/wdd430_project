@@ -30,7 +30,7 @@ export class ContactService {
     // this.storeContact();
     this.maxContactId = this.getMaxId();
    }
-
+ 
   //  The ContactService class needs a method to return the list of contacts
   getContacts(): Contact[]{
     // Return a copy of the information from array using 'slice'
@@ -71,10 +71,10 @@ export class ContactService {
     .set('content-type', 'application/json');
     console.log(headers);
 
-    const contacts = this.getContacts();
+    // const contacts = this.getContacts();
     this.http
       .put('https://wdd430-25ca2-default-rtdb.firebaseio.com/contacts.json',
-      contacts, {'headers': headers}
+      this.contacts, {'headers': headers}
       )
       .subscribe(response => {
         console.log(response);

@@ -76,10 +76,10 @@ export class MessagesService {
     .set('content-type', 'application/json');
     console.log(headers);
 
-    const messages = this.getMessages();
+    // const messages = this.getMessages();
     this.http
       .put('https://wdd430-25ca2-default-rtdb.firebaseio.com/messages.json',
-      messages, {'headers': headers}
+      this.messages, {'headers': headers}
       )
       .subscribe(response => {
         console.log(response);
