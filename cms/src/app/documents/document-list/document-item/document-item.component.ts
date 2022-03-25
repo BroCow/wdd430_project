@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Document } from '../../document.model';
 
+
 @Component({
   selector: 'cms-document-item',
   templateUrl: './document-item.component.html',

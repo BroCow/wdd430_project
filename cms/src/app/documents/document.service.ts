@@ -1,7 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Document } from './document.model';
 // import the MOCKDOCUMENTS.ts file
-import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
 
 // add a statement at the top of the file to import the rxjs class
 import { Subject } from 'rxjs';
@@ -29,10 +28,11 @@ export class DocumentService {
 
   // Use the constructor function in the DocumentService class and assign the value of the MOCKDOCUMENTS variable defined in the MOCKDOCUMENTS.ts file to the documents class variable in the DocumentService class
   constructor(private http: HttpClient) {
-    this.documents = MOCKDOCUMENTS;
+    // this.documents = MOCKDOCUMENTS;
     // this.storeDocuments();
     // Inside the constructor() method of the DocumentService class call the getMaxId() function and assign the value returned to the maxDocumentId class variable
-    this.maxDocumentId = this.getMaxId();
+    // this.maxDocumentId = this.getMaxId();
+    this.getDocuments();
    }
 
 
@@ -48,13 +48,17 @@ export class DocumentService {
   // replace the code in the getDocuments() method.
   getDocuments(): Document[]{
     this.http
-            .get<Document[]>('https://wdd430-25ca2-default-rtdb.firebaseio.com/documents.json')
+            // .get<Document[]>('https://wdd430-25ca2-default-rtdb.firebaseio.com/documents.json')
+
+            .get<Document[]>('http://localhost:3000/documents')
             
             .subscribe(
               //  Success method
               // Assign the array of documents received to the documents property
               (documents: Document[]) => {
                 this.documents = documents;
+                console.log('documents ', this.documents);
+                console.log(documents[1].name);
                 // Call the getMaxId() method to get the maximum value used for the id property in the document list, and assign the value returned to the maxDocumentId property
                 this.maxDocumentId = this.getMaxId();
                 // Sort the list of documents by name using the sort() JavaScript array method. This method requires that you pass it a compare function. The compare function is called for each element in the array. It receives two inputs, the current element in the array and the next element in the array.   
@@ -81,8 +85,9 @@ export class DocumentService {
                 console.log(error);
               }
               )
-              return this.documents.slice();   
-  }
+              
+              return this.documents.slice();      
+  } 
 
   // Create the storeDocuments() method in the DocumentService class. This method will be called when a Document object is added, updated, or deleted in the document list. It will issue an HTTP Put request to update the document list in your Firebase database server.
   storeDocuments(){
@@ -127,25 +132,49 @@ export class DocumentService {
     // RETURN null
   }
 
-  deleteDocument(document: Document){
-    if(document == undefined || document == null){
-      return;
-    }
-    let pos = this.documents.indexOf(document);
-    if(pos<0){
-      return;
-    }
-    this.documents.splice(pos, 1);
-    this.documentChangedEvent.emit(this.documents.slice());
-    let documentsListClone = this.documents.slice();
-    // this.documentListChangedEvent.next(documentsListClone);
-    this.storeDocuments();
+  // deleteDocument(document: Document){
+  //   if(document == undefined || document == null){
+  //     return;
+  //   }
+  //   let pos = this.documents.indexOf(document);
+  //   if(pos<0){
+  //     return;
+  //   }
+  //   this.documents.splice(pos, 1);
+  //   this.documentChangedEvent.emit(this.documents.slice());
+  //   let documentsListClone = this.documents.slice();
+  //   // this.documentListChangedEvent.next(documentsListClone);
+  //   this.storeDocuments();
 
-    this.documentChangedEvent.next(this.documents.slice());
+  //   this.documentChangedEvent.next(this.documents.slice());
+  // }
+
+
+  deleteDocument(document: Document) {
+
+    if (!document) {
+      return;
+    }
+
+    const pos = this.documents.findIndex(d => d.id === document.id);
+
+    if (pos < 0) {
+      return;
+    }
+
+    // delete from database
+    this.http.delete('http://localhost:3000/documents/' + document.id)
+      .subscribe(
+        (response: Response) => {
+          this.documents.splice(pos, 1);
+          this.storeDocuments();
+        }
+      );
   }
 
   getMaxId(): number{
     let maxId = 0;
+    console.log('documents ', this.documents);
     this.documents.forEach(element => {
       let currentId = parseInt(element.id);
       if(currentId > maxId){
@@ -155,32 +184,90 @@ export class DocumentService {
     return maxId;
   }
 
-  addDocument(newDocument: Document){
-    if(newDocument == undefined || newDocument == null){
+  // addDocument(newDocument: Document){
+  //   if(newDocument == undefined || newDocument == null){
+  //     return;
+  //   }
+  //   this.maxDocumentId++;
+  //   newDocument.id = this.maxDocumentId.toString();
+  //   this.documents.push(newDocument);
+  //   let documentsListClone = this.documents.slice();
+  //   // Delete and replace the last statement (the call to the documentListChangedEvent's next() method) with a statement to call the storeDocuments() method instead
+  //   // this.documentListChangedEvent.next(documentsListClone);
+  //   this.storeDocuments();
+  // }
+
+
+  addDocument(document: Document) {
+    if (!document) {
       return;
     }
-    this.maxDocumentId++;
-    newDocument.id = this.maxDocumentId.toString();
-    this.documents.push(newDocument);
-    let documentsListClone = this.documents.slice();
-    // Delete and replace the last statement (the call to the documentListChangedEvent's next() method) with a statement to call the storeDocuments() method instead
-    // this.documentListChangedEvent.next(documentsListClone);
-    this.storeDocuments();
+
+    // make sure id of the new Document is empty
+    document.id = '';
+
+    // header tells your NodeJS server that you are passing a JSON object
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+
+    // add to database
+    this.http.post<{ message: string, document: Document }>('http://localhost:3000/documents',
+      document,
+      { headers: headers })
+      .subscribe(
+        (responseData) => {
+          // add new document to documents
+          this.documents.push(responseData.document);
+          this.storeDocuments();
+        }
+      );
   }
 
-  updateDocument(originalDocument: Document, newDocument: Document){
-    if(originalDocument == undefined || originalDocument == null || newDocument == undefined || newDocument == null){
+
+
+  // updateDocument(originalDocument: Document, newDocument: Document){
+  //   if(!originalDocument || !newDocument){
+  //     return;
+  //   }
+  //   let pos = this.documents.indexOf(originalDocument);
+  //   if(pos < 0){
+  //     return;
+  //   }
+  //   newDocument.id = originalDocument.id;
+  //   this.documents[pos] = newDocument;
+  //   let documentsListClone = this.documents.slice();
+  //   // this.documentListChangedEvent.next(documentsListClone);
+  //   this.storeDocuments();
+  // }
+
+
+  updateDocument(originalDocument: Document, newDocument: Document) {
+    if (!originalDocument || !newDocument) {
       return;
     }
-    let pos = this.documents.indexOf(originalDocument);
-    if(pos < 0){
+
+    const pos = this.documents.findIndex(d => d.id === originalDocument.id);
+
+    if (pos < 0) {
       return;
     }
+
+    // set the id of the new Document to the id of the old Document
     newDocument.id = originalDocument.id;
-    this.documents[pos] = newDocument;
-    let documentsListClone = this.documents.slice();
-    // this.documentListChangedEvent.next(documentsListClone);
-    this.storeDocuments();
+    // newDocument._id = originalDocument._id;
+
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+
+    // update database
+    this.http.put('http://localhost:3000/documents/' + originalDocument.id,
+      newDocument, { headers: headers })
+      .subscribe(
+        (response: Response) => {
+          this.documents[pos] = newDocument;
+          this.storeDocuments();
+        }
+      );
   }
+
+
 }
   

@@ -3,7 +3,7 @@ import { Message } from './message.model';
 import { MOCKMESSAGES } from './MOCKMESSAGES';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
-
+ 
 @Injectable({
   providedIn: 'root'
 })
@@ -22,12 +22,14 @@ export class MessagesService {
 
   // Use the constructor method in the MessageService class and assign the value of the MOCKMESSAGES variable defined in the MOCKMESSAGES.ts file to the messages class variable in the MessageService class
   constructor(private http: HttpClient) {
-    this.messages = MOCKMESSAGES;
-    this.maxMessageId = this.getMaxId();
+    // this.messages = MOCKMESSAGES;
+    // this.maxMessageId = this.getMaxId();
+    this.getMessages();
   }
 
   getMaxId(): number{
     let maxId = 0;
+    console.log('messages', this.messages);
     this.messages.forEach(element => {
       let currentId = parseInt(element.id);
       if(currentId > maxId){
@@ -42,10 +44,11 @@ export class MessagesService {
     // Return a copy of the information from array using 'slice'
     // return this.messages.slice();
     this.http
-      .get<Message[]>('https://wdd430-25ca2-default-rtdb.firebaseio.com/messages.json')
+      .get<Message[]>('http://localhost:3000/messages')
       .subscribe(
         (messages: Message[]) => {
           this.messages = messages;
+          console.log('messages ', this.messages);
           this.maxMessageId = this.getMaxId();
           this.messages.sort(function (a,b){
             if(a.sender < b.sender){
@@ -103,13 +106,38 @@ export class MessagesService {
 
   // add a new function to the MessageService class with the following signature:
   // addMessage(message: Message)
-  addMessage(message: Message){
+  // addMessage(message: Message){
     // Inside the method, push the Message passed as an input onto the messages array defined in the MessageService class
-    this.messages.push(message);
+    // this.messages.push(message);
 
     // At the end of the addMessage() method, use the messageChangedEvent emitter to emit a copy—for example, the slice() method
     // this.messageChangedEvent.emit(this.messages.slice());
-    this.storeMessage();
+  //   this.storeMessage();
+  // }
+
+
+  addMessage(message: Message) {
+    if (!message) {
+      return;
+    }
+
+    // make sure id of the new message is empty
+    message.id = '';
+
+    // header tells your NodeJS server that you are passing a JSON object
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+
+    // add to database
+    this.http.post<{ message: string, msg: Message }>('http://localhost:3000/messages',
+      message,
+      { headers: headers })
+      .subscribe(
+        (responseData) => {
+          // add new message to messages
+          this.messages.push(responseData.msg);
+          this.storeMessage();
+        }
+      );
   }
 
 
